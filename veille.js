@@ -1,11 +1,13 @@
+const Parser = require('rss-parser');
+const parser = new Parser();
+
 const RSS_URL = 'https://web.dev/feed.xml';
 const WEBHOOK_URL = process.env.GOOGLE_CHAT_WEBHOOK;
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
 async function fetchNews() {
-  const rssParser = require('rss-url-parser');
-  const data = await rssParser(RSS_URL);
-  const latest = data[0];
+  const feed = await parser.parseURL(RSS_URL);
+  const latest = feed.items[0];
 
   // Forçage du lien en Français si possible via le paramètre hl=fr
   const linkFr = latest.link.includes('?') ? `${latest.link}&hl=fr` : `${latest.link}?hl=fr`;
