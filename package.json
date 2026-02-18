@@ -1,0 +1,8 @@
+{
+  "name": "veille-tech",
+  "version": "1.0.0",
+  "main": "veille.js",
+  "dependencies": {
+    "rss-url-parser": "^2.3.1"
+  }
+}
