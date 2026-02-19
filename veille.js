@@ -13,7 +13,7 @@ async function fetchNews() {
   const latest = feed.items[0];
   console.log("Article trouvé :", latest.title);
   
-  const modelName = "gemini-1.5-flash-latest"; 
+  const modelName = "gemini-2.0-flash"; 
   console.log(`Tentative avec le modèle : ${modelName}`);
   
   const model = genAI.getGenerativeModel({ model: modelName });
