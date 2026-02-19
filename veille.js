@@ -45,7 +45,7 @@ const aiText = result.response.text();*/
   };
 
   console.log("Envoi vers Google Chat...");
-  await fetch(WEBHOOK_URL, {
+  const response = await fetch(WEBHOOK_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json; charset=UTF-8' },
     body: JSON.stringify(message),
