@@ -24,7 +24,7 @@ const prompt = `
   `;
 
   console.log("Appel à l'IA Gemini...");
-const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${GEMINI_API_KEY}`, {
+const response = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
@@ -33,11 +33,14 @@ const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/m
   const aiData = await response.json();
   
   if (aiData.error) {
-    throw new Error("Erreur Gemini API: " + aiData.error.message);
+    console.error("Détails erreur API :", JSON.stringify(aiData.error));
+    throw new Error(`Erreur Gemini API: ${aiData.error.message}`);
   }
 
-  const aiText = aiData.candidates[0].content.parts[0].text;
-
+  // Nettoyage du texte au cas où Gemini mettrait des balises Markdown
+  let aiText = aiData.candidates[0].content.parts[0].text;
+  aiText = aiText.replace(/\*/g, '');
+  
   const message = {
     text: `🚀 **#Tech : ${latest.title}**\n\n${aiText}\n\n*Source : [Lire l'article](${linkFr})*`
   };
