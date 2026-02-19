@@ -13,16 +13,17 @@ async function fetchNews() {
 
   const linkFr = latest.link.includes('?') ? `${latest.link}&hl=fr` : `${latest.link}?hl=fr`;
 
-  const prompt = `
-    Analyse ce titre d'article tech : "${latest.title}".
-    Rédige un message court pour mes collègues développeurs en suivant strictement ce format :
-    Le Pourquoi : Une phrase expliquant pourquoi c'est pertinent pour une équipe de dev.
-    Le "Takeaway" : L'info technique principale à retenir.
-    Sois concis et technique. Réponds en français.
+const prompt = `
+    Analyse ce titre : "${latest.title}".
+    Rédige un message court pour des développeurs.
+    Format strict :
+    Le Pourquoi : (pertinence équipe dev)
+    Le "Takeaway" : (info technique clé)
+    Réponds en français, SANS Markdown, SANS gras, juste le texte.
   `;
 
   console.log("Appel à l'IA Gemini...");
-  const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+  const response = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
