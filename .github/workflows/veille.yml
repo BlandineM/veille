@@ -21,5 +21,5 @@ jobs:
           GOOGLE_CHAT_WEBHOOK: ${{ secrets.GOOGLE_CHAT_WEBHOOK }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
-            npm install rss-parser
+            npm install rss-parser @google/generative-ai
             node veille.js
