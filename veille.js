@@ -10,6 +10,7 @@ async function fetchNews() {
   const feed = await parser.parseURL(RSS_URL);
   const latest = feed.items[0];
   console.log("Article trouvé :", latest.title);
+  console.log("Clé API présente :", !!GEMINI_API_KEY);
 
   const linkFr = latest.link.includes('?') ? `${latest.link}&hl=fr` : `${latest.link}?hl=fr`;
 
@@ -23,7 +24,7 @@ const prompt = `
   `;
 
   console.log("Appel à l'IA Gemini...");
-  const response = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${GEMINI_API_KEY}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
