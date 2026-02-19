@@ -15,8 +15,6 @@ async function fetchNews() {
   
   const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" }); // Utilise 2.0 flash ou 1.5-flash selon ta dispo doc
   
-  const linkFr = latest.link.includes('?') ? `${latest.link}&hl=fr` : `${latest.link}?hl=fr`;
-
 const prompt = `
     Analyse ce titre : "${latest.title}".
     Rédige un message court pour des développeurs.
