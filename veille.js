@@ -6,13 +6,13 @@ const WEBHOOK_URL = process.env.GOOGLE_CHAT_WEBHOOK;
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
 async function fetchNews() {
+  console.log("Démarrage de la récupération RSS...");
   const feed = await parser.parseURL(RSS_URL);
   const latest = feed.items[0];
+  console.log("Article trouvé :", latest.title);
 
-  // Forçage du lien en Français si possible via le paramètre hl=fr
   const linkFr = latest.link.includes('?') ? `${latest.link}&hl=fr` : `${latest.link}?hl=fr`;
 
-  // On demande à l'IA de rédiger le contenu selon tes règles
   const prompt = `
     Analyse ce titre d'article tech : "${latest.title}".
     Rédige un message court pour mes collègues développeurs en suivant strictement ce format :
@@ -21,6 +21,7 @@ async function fetchNews() {
     Sois concis et technique. Réponds en français.
   `;
 
+  console.log("Appel à l'IA Gemini...");
   const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -28,17 +29,32 @@ async function fetchNews() {
   });
 
   const aiData = await response.json();
+  
+  if (aiData.error) {
+    throw new Error("Erreur Gemini API: " + aiData.error.message);
+  }
+
   const aiText = aiData.candidates[0].content.parts[0].text;
 
   const message = {
     text: `🚀 **#Tech : ${latest.title}**\n\n${aiText}\n\n*Source : [Lire l'article](${linkFr})*`
   };
 
-  await fetch(WEBHOOK_URL, {
+  console.log("Envoi vers Google Chat...");
+  const webhookResponse = await fetch(WEBHOOK_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json; charset=UTF-8' },
     body: JSON.stringify(message),
   });
+
+  if (webhookResponse.ok) {
+    console.log("Succès ! Message posté.");
+  } else {
+    console.log("Erreur Webhook:", await webhookResponse.text());
+  }
 }
 
-fetchNews().catch(console.error);
+fetchNews().catch(err => {
+  console.error("ERREUR FATALE:", err);
+  process.exit(1);
+});
